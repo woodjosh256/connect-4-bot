@@ -1,7 +1,7 @@
 from game.chipcolors import ChipColors
 from game.game import Game
 from game.outputable import Outputable
-from game.playables.BennettW_Random import BennettW_Random
+from game.playables.BennettW_Random.BennettW_Random import BennettW_Random
 
 def _play_game(red_player: Outputable, black_player: Outputable, starting_color: ChipColors = ChipColors.RED, output_moves: bool = False) -> Game:
     game = Game()
