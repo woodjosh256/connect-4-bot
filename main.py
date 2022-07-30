@@ -1,10 +1,15 @@
+import importlib
+import pkgutil
 from game.chipcolors import ChipColors
 from game.game import Game
 from game.outputable import Outputable
+from game.playable import Playable
+import game.playables as playables
 from game.playables.BennettW_Random.BennettW_Random import BennettW_Random
 
-def _play_game(red_player: Outputable, black_player: Outputable, starting_color: ChipColors = ChipColors.RED, output_moves: bool = False) -> Game:
+def _play_game(red_player: Playable, black_player: Playable, starting_color: ChipColors = ChipColors.RED, output_moves: bool = False) -> Game:
     game = Game()
+    outputable = Outputable()
 
     if output_moves:
         print("Welcome to Connect Four!")
@@ -29,8 +34,29 @@ def _play_game(red_player: Outputable, black_player: Outputable, starting_color:
 
     return game
 
+def _import_submodules(package, recursive=True):
+    """ Import all submodules of a module, recursively, including subpackages
+
+    :param package: package (name or actual module)
+    :type package: str | module
+    :rtype: dict[str, types.ModuleType]
+    """
+    if isinstance(package, str):
+        package = importlib.import_module(package)
+    results = {}
+    for loader, name, is_pkg in pkgutil.walk_packages(package.__path__):
+        full_name = package.__name__ + '.' + name
+        results[full_name] = importlib.import_module(full_name)
+        if recursive and is_pkg:
+            results.update(_import_submodules(full_name))
+    return results
+
 if __name__ == '__main__':
-    outputable = Outputable()
+    # Import all playable classes
+    _import_submodules(playables)
+    player_classes = Playable.__subclasses__()
+    print(player_classes)
+
     # TODO: Add matchmaking or bracket logic here
     red_player = BennettW_Random(ChipColors.RED)
     black_player = BennettW_Random(ChipColors.BLACK)

@@ -4,7 +4,7 @@ import random
 from game.chipcolors import ChipColors
 from game.playable import Playable
 
-class BennettW_Random(Playable):
+class BennettW_Random2(Playable):
     def __init__(self, color: ChipColors):
         super().__init__(color)
 
@@ -12,4 +12,4 @@ class BennettW_Random(Playable):
         return available_moves[random.randint(0, len(available_moves) - 1)]
 
     def get_name(self) -> str:
-        return "BennettW Random"
+        return "BennettW Random2"
