@@ -1,10 +1,12 @@
 from game.chipcolors import ChipColors
 from game.game import Game
 from game.outputable import Outputable
+from game.playable import Playable
 from game.playables.BennettW_Random.BennettW_Random import BennettW_Random
 
-def _play_game(red_player: Outputable, black_player: Outputable, starting_color: ChipColors = ChipColors.RED, output_moves: bool = False) -> Game:
+def _play_game(red_player: Playable, black_player: Playable, starting_color: ChipColors = ChipColors.RED, output_moves: bool = False) -> Game:
     game = Game()
+    outputable = Outputable()
 
     if output_moves:
         print("Welcome to Connect Four!")
@@ -30,7 +32,6 @@ def _play_game(red_player: Outputable, black_player: Outputable, starting_color:
     return game
 
 if __name__ == '__main__':
-    outputable = Outputable()
     # TODO: Add matchmaking or bracket logic here
     red_player = BennettW_Random(ChipColors.RED)
     black_player = BennettW_Random(ChipColors.BLACK)
