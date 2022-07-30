@@ -23,8 +23,8 @@ class Playable(ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def get_name(self) -> str:
+    @classmethod
+    def get_name(cls) -> str:
         """
         :return name of the playable
         """

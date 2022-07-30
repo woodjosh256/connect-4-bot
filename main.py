@@ -1,8 +1,12 @@
+import importlib
+import pkgutil
+from itertools import combinations
+from weakref import ref
 from game.chipcolors import ChipColors
 from game.game import Game
 from game.outputable import Outputable
 from game.playable import Playable
-from game.playables.BennettW_Random.BennettW_Random import BennettW_Random
+import game.playables as playables
 
 def _play_game(red_player: Playable, black_player: Playable, starting_color: ChipColors = ChipColors.RED, output_moves: bool = False) -> Game:
     game = Game()
@@ -35,23 +39,54 @@ def _play_game(red_player: Playable, black_player: Playable, starting_color: Chi
 
     return game
 
+def _import_submodules(package, recursive=True):
+    """ Import all submodules of a module, recursively, including subpackages
+
+    :param package: package (name or actual module)
+    :type package: str | module
+    :rtype: dict[str, types.ModuleType]
+    """
+    if isinstance(package, str):
+        package = importlib.import_module(package)
+    results = {}
+    for loader, name, is_pkg in pkgutil.walk_packages(package.__path__):
+        full_name = package.__name__ + '.' + name
+        results[full_name] = importlib.import_module(full_name)
+        if recursive and is_pkg:
+            results.update(_import_submodules(full_name))
+    return results
+
 if __name__ == '__main__':
-    # TODO: Add matchmaking or bracket logic here
-    red_player = BennettW_Random(ChipColors.RED)
-    black_player = BennettW_Random(ChipColors.BLACK)
+    # Import all playable classes
+    _import_submodules(playables)
+    playable_classes = Playable.__subclasses__()
+    playable_wins = {_cls: 0 for _cls in playable_classes}
 
-    total_red_wins = 0
-    total_black_wins = 0
-    total_ties = 0
-    for i in range(1000):
-        game_result = _play_game(red_player, black_player, starting_color=ChipColors.get_random()).win_state
-        if game_result == Game.WinStates.RED:
-            total_red_wins += 1
-        elif game_result == Game.WinStates.BLACK:
-            total_black_wins += 1
-        else:
-            total_ties += 1
+    games = combinations(playable_classes, 2)
 
-    print(f"Red wins: {total_red_wins}")
-    print(f"Black wins: {total_black_wins}")
-    print(f"Ties: {total_ties}")
+    for game in games:
+        red_player = game[0](ChipColors.RED)
+        black_player = game[1](ChipColors.BLACK)
+
+        total_red_wins = 0
+        total_black_wins = 0
+        total_ties = 0
+        for i in range(1000):
+            game_result = _play_game(red_player, black_player, starting_color=ChipColors.get_random()).win_state
+            if game_result == Game.WinStates.RED:
+                total_red_wins += 1
+            elif game_result == Game.WinStates.BLACK:
+                total_black_wins += 1
+            else:
+                total_ties += 1
+
+        playable_wins[game[0]] += total_red_wins + (total_ties/2)
+        playable_wins[game[1]] += total_black_wins + (total_ties/2)
+
+        print(f"{red_player.get_name()} vs {black_player.get_name()}:")
+        print(f"\t{red_player.get_name()} wins: {total_red_wins}")
+        print(f"\t{black_player.get_name()} wins: {total_black_wins}")
+        print(f"\tTies: {total_ties}")
+
+    for i, playable_entry in enumerate(dict(sorted(playable_wins.items(), key=lambda item: item[1], reverse=True))):
+        print(f"#{i+1}: {playable_entry.get_name()} - {playable_wins[playable_entry]}")
