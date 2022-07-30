@@ -11,5 +11,6 @@ class BennettW_Random(Playable):
     def move(self, game_state: List[List[int]], available_moves: List[int]) -> int:
         return available_moves[random.randint(0, len(available_moves) - 1)]
 
-    def get_name(self) -> str:
+    @classmethod
+    def get_name(cls) -> str:
         return "BennettW Random"

@@ -1,5 +1,7 @@
 import importlib
 import pkgutil
+from itertools import combinations
+from weakref import ref
 from game.chipcolors import ChipColors
 from game.game import Game
 from game.outputable import Outputable
@@ -54,25 +56,34 @@ def _import_submodules(package, recursive=True):
 if __name__ == '__main__':
     # Import all playable classes
     _import_submodules(playables)
-    player_classes = Playable.__subclasses__()
-    print(player_classes)
+    playable_classes = Playable.__subclasses__()
+    playable_wins = {_cls: 0 for _cls in playable_classes}
 
-    # TODO: Add matchmaking or bracket logic here
-    red_player = BennettW_Random(ChipColors.RED)
-    black_player = BennettW_Random(ChipColors.BLACK)
+    games = combinations(playable_classes, 2)
 
-    total_red_wins = 0
-    total_black_wins = 0
-    total_ties = 0
-    for i in range(1000):
-        game_result = _play_game(red_player, black_player, starting_color=ChipColors.get_random()).win_state
-        if game_result == Game.WinStates.RED:
-            total_red_wins += 1
-        elif game_result == Game.WinStates.BLACK:
-            total_black_wins += 1
-        else:
-            total_ties += 1
+    for game in games:
+        red_player = game[0](ChipColors.RED)
+        black_player = game[1](ChipColors.BLACK)
 
-    print(f"Red wins: {total_red_wins}")
-    print(f"Black wins: {total_black_wins}")
-    print(f"Ties: {total_ties}")
+        total_red_wins = 0
+        total_black_wins = 0
+        total_ties = 0
+        for i in range(1000):
+            game_result = _play_game(red_player, black_player, starting_color=ChipColors.get_random()).win_state
+            if game_result == Game.WinStates.RED:
+                total_red_wins += 1
+            elif game_result == Game.WinStates.BLACK:
+                total_black_wins += 1
+            else:
+                total_ties += 1
+
+        playable_wins[game[0]] += total_red_wins + (total_ties/2)
+        playable_wins[game[1]] += total_black_wins + (total_ties/2)
+
+        print(f"{red_player.get_name()} vs {black_player.get_name()}:")
+        print(f"\t{red_player.get_name()} wins: {total_red_wins}")
+        print(f"\t{black_player.get_name()} wins: {total_black_wins}")
+        print(f"\tTies: {total_ties}")
+
+    for i, playable_entry in enumerate(dict(sorted(playable_wins.items(), key=lambda item: item[1], reverse=True))):
+        print(f"#{i+1}: {playable_entry.get_name()} - {playable_wins[playable_entry]}")
