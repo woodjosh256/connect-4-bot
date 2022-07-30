@@ -7,7 +7,6 @@ from game.game import Game
 from game.outputable import Outputable
 from game.playable import Playable
 import game.playables as playables
-from game.playables.BennettW_Random.BennettW_Random import BennettW_Random
 
 def _play_game(red_player: Playable, black_player: Playable, starting_color: ChipColors = ChipColors.RED, output_moves: bool = False) -> Game:
     game = Game()
@@ -19,7 +18,11 @@ def _play_game(red_player: Playable, black_player: Playable, starting_color: Chi
     player_next_turn = starting_color
 
     while game.win_state is None:
-        game.insert_chip(player_next_turn, black_player.move(game.board_state, game.open_columns()))
+        if player_next_turn == ChipColors.RED:
+            game.insert_chip(player_next_turn, red_player.move(list(game.board_state), Game.open_columns(game.board_state)))
+        else:
+            game.insert_chip(player_next_turn, black_player.move(list(game.board_state), Game.open_columns(game.board_state)))
+
         player_next_turn = ChipColors.BLACK if player_next_turn == ChipColors.RED else ChipColors.RED
         if output_moves:
             print(f"{'Red' if player_next_turn == ChipColors.RED else 'Black'}'s turn:")
