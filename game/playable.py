@@ -2,14 +2,12 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
 
+from game.chipcolors import ChipColors
+
 
 class Playable(ABC):
 
-    class Colors(Enum):
-        RED = 0
-        BLACK = 1
-
-    def __init__(self, color: Colors):
+    def __init__(self, color: ChipColors):
         self.color = color
 
     @abstractmethod
