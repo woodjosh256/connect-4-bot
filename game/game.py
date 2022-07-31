@@ -19,8 +19,13 @@ class Game:
         self.win_state = None
         self.prev_moves = []
 
-    def insert_chip(self, chip: ChipColors, col: int) -> WinStates:
-        row = self.drop_chip(chip, col, self.board_state)
+    def insert_chip(self, chip: ChipColors, col: int) -> WinStates:    
+        try:
+            row = self.drop_chip(chip, col, self.board_state)
+        except ValueError as e:
+            print("An invalid move was selected. Game forfeit.")
+            self.win_state = ChipColors.get_opposite(chip)
+            return self.win_state
 
         self.prev_moves.append((chip, (row, col)))
 
