@@ -1,5 +1,4 @@
 from enum import Enum
-from re import L
 from typing import List
 
 from game.chipcolors import ChipColors
@@ -18,9 +17,12 @@ class Game:
     def __init__(self) -> None:
         self.board_state = [[None] * self.COLUMNS for i in range(self.ROWS)]
         self.win_state = None
+        self.prev_moves = []
 
     def insert_chip(self, chip: ChipColors, col: int) -> WinStates:
         row = self.drop_chip(chip, col, self.board_state)
+
+        self.prev_moves.append((chip, (row, col)))
 
         self._update_win_state(row, col)
         return self.win_state

@@ -1,7 +1,7 @@
 import importlib
 import pkgutil
 from itertools import combinations
-from weakref import ref
+from copy import deepcopy
 from game.chipcolors import ChipColors
 from game.game import Game
 from game.outputable import Outputable
@@ -18,10 +18,16 @@ def _play_game(red_player: Playable, black_player: Playable, starting_color: Chi
     player_next_turn = starting_color
 
     while game.win_state is None:
-        if player_next_turn == ChipColors.RED:
-            game.insert_chip(player_next_turn, red_player.move(list(game.board_state), Game.open_columns(game.board_state)))
-        else:
-            game.insert_chip(player_next_turn, black_player.move(list(game.board_state), Game.open_columns(game.board_state)))
+        try:
+            if player_next_turn == ChipColors.RED:
+                game.insert_chip(player_next_turn, red_player.move(deepcopy(game.board_state), Game.open_columns(game.board_state), deepcopy(game.prev_moves)))
+            else:
+                game.insert_chip(player_next_turn, black_player.move(deepcopy(game.board_state), Game.open_columns(game.board_state), deepcopy(game.prev_moves)))
+        except ValueError as e:
+            if output_moves:
+                print("An invalid move was selected. Game forfeit.")
+            game.win_state = Game.WinStates.RED if player_next_turn == ChipColors.RED else Game.WinStates.BLACK
+            break
 
         player_next_turn = ChipColors.BLACK if player_next_turn == ChipColors.RED else ChipColors.RED
         if output_moves:
