@@ -1,13 +1,14 @@
+from dataclasses import dataclass
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 from game.chipcolors import ChipColors
 
 
 class Game:
 
-    ROWS = 6
-    COLUMNS = 7
+    ROWS = 10
+    COLUMNS = 10
     WINNING_NUMBER = 4
 
     class WinStates(Enum):
@@ -15,54 +16,108 @@ class Game:
         BLACK = 1
         TIE = 2
 
+    @dataclass
+    class Move:
+        row: int
+        col: int
+        color: ChipColors
+
     def __init__(self) -> None:
-        self.board_state = [[None] * self.COLUMNS for i in range(self.ROWS)]
-        self.win_state = None
+        self.chip_state: List[List[Optional[ChipColors]]] \
+            = [[None] * self.COLUMNS for i in range(self.ROWS)]
+        self.moves: List[Game.Move] = []
 
-        self.last_row = None
-        self.last_col = None
-        self.last_color = None
-
-    def insert_chip(self, chip: ChipColors, col: int) -> None:
+    def insert_chip(self, color: ChipColors, col: int) -> None:
         if col not in self._open_columns():
-            raise ValueError("Invalid column")
+            raise ValueError(f"Invalid column. "
+                             f"Valid columns: {self._open_columns()}")
 
         row = 0
-        while row < self.ROWS - 1 and self.board_state[row + 1][col] is None:
+        while row < self.ROWS - 1 \
+                and self.chip_state[row + 1][col] is None:
             row += 1
 
-        self.board_state[row][col] = chip
-
-        self.last_row = row
-        self.last_col = col
-        self.last_color = ChipColors
+        self.chip_state[row][col] = color
+        self.moves.append(self.Move(row, col, color))
 
     def _open_columns(self) -> List[int]:
-        # todo actually implement
-        return [i for i in range(self.COLUMNS)]
+        return [col for col in range(self.COLUMNS)
+                if self.chip_state[0][col] is None]
 
-    def get_win_state(self) -> WinStates:
-        h_win = self.check_horiz_win()
-        if h_win:
-            return h_win
+    def get_win_state(self) -> Optional[WinStates]:
+        for win_condition in [self._horiz_dist,
+                              self._vert_dist,
+                              self._incline_diagonal_dist,
+                              self._decline_diagonal_dist]:
+            distance = win_condition()
+            if distance >= self.WINNING_NUMBER - 1:
+                last_color = self.moves[-1].color
+                if last_color == ChipColors.RED:
+                    return self.WinStates.RED
+                else:
+                    return self.WinStates.BLACK
 
-        v_win = self.check_vert_win()
-        if v_win:
-            return v_win
+        if not self._open_columns():
+            return self.WinStates.TIE
 
-        d_win = self.check_diagonal_win()
-        if d_win:
-            return d_win
+        return None
 
-    def check_horiz_win(self) -> WinStates:
-        row = self.last_row
-        col = self.last_col
+    def _horiz_dist(self) -> int:
+        last_row = self.moves[-1].row
+        min_col = max_col = self.moves[-1].col
+        last_color = self.moves[-1].color
 
-        while col > 0 and self.board_state[row][col - 1] == self.last_color:
+        while (min_col > 0
+               and self.chip_state[last_row][min_col - 1] == last_color):
+            min_col -= 1
+        while (max_col < self.COLUMNS - 1
+               and self.chip_state[last_row][max_col + 1] == last_color):
+            max_col += 1
 
+        return max_col - min_col
 
-    def check_vert_win(self) -> WinStates:
-        pass
+    def _vert_dist(self) -> int:
+        min_row = max_row = self.moves[-1].row
+        last_col = self.moves[-1].col
+        last_color = self.moves[-1].color
 
-    def check_diagonal_win(self) -> WinStates:
-        pass
+        while (min_row > 0
+               and self.chip_state[min_row - 1][last_col] == last_color):
+            min_row -= 1
+        while (max_row < self.ROWS - 1
+               and self.chip_state[max_row + 1][last_col] == last_color):
+            max_row += 1
+
+        return max_row - min_row
+
+    def _incline_diagonal_dist(self) -> int:
+        min_row = max_row = self.moves[-1].row
+        min_col = max_col = self.moves[-1].col
+        last_color = self.moves[-1].color
+
+        while (max_row < self.ROWS - 1 and min_col > 0
+               and self.chip_state[max_row + 1][min_col - 1] == last_color):
+            max_row += 1
+            min_col -= 1
+        while (min_row > 0 and max_col < self.COLUMNS - 1
+               and self.chip_state[min_row -1][max_col + 1] == last_color):
+            min_row -= 1
+            max_col += 1
+
+        return max_row - min_row
+
+    def _decline_diagonal_dist(self) -> int:
+        min_row = max_row = self.moves[-1].row
+        min_col = max_col = self.moves[-1].col
+        last_color = self.moves[-1].color
+
+        while (min_row > 0 and min_col > 0
+               and self.chip_state[min_row - 1][min_col - 1] == last_color):
+            min_row -= 1
+            min_col -= 1
+        while (max_row < self.ROWS - 1 and max_col < self.COLUMNS - 1
+               and self.chip_state[max_row + 1][max_col + 1] == last_color):
+            max_row += 1
+            max_col += 1
+
+        return max_row - min_row
