@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Optional
 
-from game.game import ChipColors
+from game.game import ChipColors, WinStates
+from game.playable import Playable
 from terminalrunner.outputable import Outputable
 
 
@@ -21,6 +22,7 @@ class Outputter(Outputable):
             print(colored_sep_char
                   + colored_sep_char.join(map(self._chip_to_str, row))
                   + colored_sep_char)
+        print()
 
     def _chip_to_str(self, chip: ChipColors) -> str:
         if chip == ChipColors.RED:
@@ -29,3 +31,10 @@ class Outputter(Outputable):
             return self.BLACK_CODE + self.CHIP_CHAR + self.END_CODE
         else:
             return self.EMPTY_CODE + self.EMPTY_CHAR + self.END_CODE
+
+    def request_move(self, playable: Playable):
+        print(f"{playable.get_name()}'s turn:")
+
+    def output_results(self, win_state: WinStates,
+                       winner: Optional[Playable] = None):
+        print(win_state)  # todo improve
