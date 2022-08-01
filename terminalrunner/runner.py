@@ -27,7 +27,7 @@ class Runner:
                 move = playable2.move(state, game.open_columns())
                 game.insert_chip(playable2.color, move)
 
-            # outputter.output_board(game.state)
+            outputter.output_board(game.state)
 
             turn += 1
 
