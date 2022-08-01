@@ -2,7 +2,23 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional
 
-from game.chipcolors import ChipColors
+
+class ChipColors(Enum):
+    RED = 0
+    BLACK = 1
+
+
+class WinStates(Enum):
+    RED = 0
+    BLACK = 1
+    TIE = 2
+
+
+@dataclass
+class Move:
+    row: int
+    col: int
+    color: ChipColors
 
 
 class Game:
@@ -11,21 +27,10 @@ class Game:
     COLUMNS = 10
     WINNING_NUMBER = 4
 
-    class WinStates(Enum):
-        RED = 0
-        BLACK = 1
-        TIE = 2
-
-    @dataclass
-    class Move:
-        row: int
-        col: int
-        color: ChipColors
-
     def __init__(self) -> None:
         self.chip_state: List[List[Optional[ChipColors]]] \
             = [[None] * self.COLUMNS for i in range(self.ROWS)]
-        self.moves: List[Game.Move] = []
+        self.moves: List[Move] = []
 
     def insert_chip(self, color: ChipColors, col: int) -> None:
         if col not in self._open_columns():
@@ -38,7 +43,7 @@ class Game:
             row += 1
 
         self.chip_state[row][col] = color
-        self.moves.append(self.Move(row, col, color))
+        self.moves.append(Move(row, col, color))
 
     def _open_columns(self) -> List[int]:
         return [col for col in range(self.COLUMNS)
@@ -53,12 +58,12 @@ class Game:
             if distance >= self.WINNING_NUMBER - 1:
                 last_color = self.moves[-1].color
                 if last_color == ChipColors.RED:
-                    return self.WinStates.RED
+                    return WinStates.RED
                 else:
-                    return self.WinStates.BLACK
+                    return WinStates.BLACK
 
         if not self._open_columns():
-            return self.WinStates.TIE
+            return WinStates.TIE
 
         return None
 

@@ -1,6 +1,5 @@
-from game.chipcolors import ChipColors
-from game.game import Game
-from game.outputable import Outputable
+from game.game import Game, ChipColors
+from terminalrunner.outputable import Outputable
 
 
 def test(color, pos, game, outputable):

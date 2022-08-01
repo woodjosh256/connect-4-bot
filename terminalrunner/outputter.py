@@ -1,10 +1,11 @@
-from abc import ABC
 from typing import List
 
-from game.chipcolors import ChipColors
+from game.game import ChipColors
+from terminalrunner.outputable import Outputable
 
 
-class Outputable(ABC):
+class Outputter(Outputable):
+
     RED_CODE = '\033[1;31;47m'
     BLACK_CODE = '\033[1;30;47m'
     EMPTY_CODE = '\033[1;36;47m'

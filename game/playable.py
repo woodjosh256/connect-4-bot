@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from enum import Enum
 from typing import List
 
-from game.chipcolors import ChipColors
+from game.game import ChipColors
 
 
 class Playable(ABC):
