@@ -55,11 +55,12 @@ class Runner:
 
         while game.get_win_state() is None:
             state = deepcopy(game.state)
+            moves = deepcopy(game.moves)
             if turn % 2 == 0:
-                move = playable1.move(state, game.open_columns())
+                move = playable1.move(state, game.open_columns(), moves)
                 game.insert_chip(playable1.color, move)
             else:
-                move = playable2.move(state, game.open_columns())
+                move = playable2.move(state, game.open_columns(), moves)
                 game.insert_chip(playable2.color, move)
 
             if output_turns:
