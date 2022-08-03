@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from game.game import ChipColors
-
+from game.chipcolors import ChipColors
+from game.game import Move
 
 class Playable(ABC):
 
@@ -11,7 +11,8 @@ class Playable(ABC):
 
     @abstractmethod
     def move(self, state: List[List[Optional[ChipColors]]],
-             available_moves: List[int]) -> int:
+             available_moves: List[int],
+             prev_moves: List[Move]) -> int:
         """
         :param state: a 2-dimensional array containing the game's
         current state. (6 rows, 7 columns)
@@ -22,8 +23,8 @@ class Playable(ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def get_name(self) -> str:
+    @classmethod
+    def get_name(cls) -> str:
         """
         :return name of the playable
         """

@@ -2,11 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional
 
-
-class ChipColors(Enum):
-    RED = 0
-    BLACK = 1
-
+from game.chipcolors import ChipColors
 
 class WinStates(Enum):
     RED = 0
