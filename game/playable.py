@@ -1,22 +1,19 @@
 from abc import ABC, abstractmethod
-from enum import Enum
-from typing import List
+from typing import List, Optional
+
+from game.game import ChipColors
 
 
 class Playable(ABC):
 
-    class Colors(Enum):
-        RED = 0
-        BLACK = 1
-
-    def __init__(self, color: Colors):
+    def __init__(self, color: ChipColors):
         self.color = color
 
     @abstractmethod
-    def move(self, game_state: List[List[int]],
+    def move(self, state: List[List[Optional[ChipColors]]],
              available_moves: List[int]) -> int:
         """
-        :param game_state: a 2-dimensional array containing the game's
+        :param state: a 2-dimensional array containing the game's
         current state. (6 rows, 7 columns)
         :param available_moves: an array of all slots that chips could
         go in represented by ints in range: [0, 6]

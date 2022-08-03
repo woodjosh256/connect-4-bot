@@ -1,13 +1,9 @@
-from game.chipcolors import ChipColors
-from game.game import Game
-from game.outputable import Outputable
+from game.game import ChipColors
+from terminalrunner.playables.randombot import RandomBot
+from terminalrunner.runner import Runner
 
 if __name__ == '__main__':
-    outputable = Outputable()
-    game = Game()
-    game.insert_chip(ChipColors.RED, 0)
-    game.insert_chip(ChipColors.BLACK, 0)
-    game.insert_chip(ChipColors.RED, 0)
-    game.insert_chip(ChipColors.BLACK, 6)
-
-    outputable.output_board(game.board_state)
+    win_stats = Runner.run_match(RandomBot(ChipColors.BLACK),
+                                 RandomBot(ChipColors.RED),
+                                 1000, False, False)
+    print(win_stats)
