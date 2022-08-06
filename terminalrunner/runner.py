@@ -4,7 +4,7 @@ from copy import deepcopy
 from itertools import combinations
 from typing import List, Type
 
-import terminalrunner.playables as playables
+import playables as playables
 from game.game import Game, ChipColors
 from game.playable import Playable
 from game.winstates import WinStates
