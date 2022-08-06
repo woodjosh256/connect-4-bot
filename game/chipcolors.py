@@ -1,17 +1,20 @@
 from enum import Enum
-import random
+
+from game.winstates import WinStates
+
 
 class ChipColors(Enum):
     RED = 0
     BLACK = 1
 
-    @classmethod
-    def get_random(cls):
-        return random.choice(list(cls.__members__.values()))
-
-    @classmethod
-    def get_opposite(cls, color):
-        if color == ChipColors.RED:
+    def get_opposing_color(self):
+        if self == ChipColors.RED:
             return ChipColors.BLACK
         else:
             return ChipColors.RED
+
+    def to_win_state(self):
+        if self == ChipColors.RED:
+            return WinStates.RED
+        elif self == ChipColors.BLACK:
+            return WinStates.BLACK

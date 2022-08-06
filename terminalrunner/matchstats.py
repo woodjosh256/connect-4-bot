@@ -1,5 +1,6 @@
-from game.game import WinStates
 from game.playable import Playable
+from game.winstates import WinStates
+
 
 class MatchStats:
 

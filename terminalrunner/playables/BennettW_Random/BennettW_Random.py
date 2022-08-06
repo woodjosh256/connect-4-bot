@@ -1,8 +1,10 @@
 import random
 from typing import List, Optional
+
 from game.chipcolors import ChipColors
-from game.game import Move
+from game.move import Move
 from game.playable import Playable
+
 
 class BennettW_Random(Playable):
     

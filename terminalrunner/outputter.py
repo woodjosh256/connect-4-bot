@@ -1,10 +1,11 @@
 from os import name as system_name, system
 from typing import List, Optional, Tuple
 
-from game.game import ChipColors, WinStates
+from game.game import ChipColors
 from game.playable import Playable
-from terminalrunner.outputable import Outputable
+from game.winstates import WinStates
 from terminalrunner.matchstats import MatchStats
+from terminalrunner.outputable import Outputable
 
 
 class Outputter(Outputable):
@@ -18,13 +19,13 @@ class Outputter(Outputable):
 
     @staticmethod
     def clear():
+        return
         if system_name == 'nt':
             _ = system('cls')
         else:
             _ = system('clear')
 
-    @staticmethod
-    def output_board(board: List[List[ChipColors]]) -> None:
+    def output_board(self, board: List[List[ChipColors]]) -> None:
         Outputter.clear()
         colored_sep_char = (Outputter.EMPTY_CODE + Outputter.SEPARATING_CHAR
                             + Outputter.END_CODE)
@@ -43,17 +44,14 @@ class Outputter(Outputable):
         else:
             return Outputter.EMPTY_CODE + Outputter.EMPTY_CHAR + Outputter.END_CODE
 
-    @staticmethod
-    def request_move( playable: Playable) -> None:
+    def request_move(self, playable: Playable) -> None:
         print(f"{playable.get_name()}'s turn:")
 
-    @staticmethod
-    def output_results(win_state: WinStates,
+    def output_results(self, win_state: WinStates,
                        winner: Optional[Playable] = None) -> None:
         print(win_state)  # todo improve
 
-    @staticmethod
-    def output_tournament_stats(tournament_stats: Tuple[Playable, Playable, MatchStats]) -> None:
+    def output_tournament_stats(self, tournament_stats: Tuple[Playable, Playable, MatchStats]) -> None:
         for playable1, playable2, match_stats in tournament_stats:
             print(f"{playable1.get_name()} vs {playable2.get_name()}")
             print(match_stats)
