@@ -1,13 +1,12 @@
 import importlib
 import pkgutil
-from copy import deepcopy
 from itertools import combinations
 from typing import List, Type
 
 import playables as playables
-from game.game import Game, ChipColors
-from game.playable import Playable
-from game.winstates import WinStates
+from connect4.game import Game, ChipColors
+from connect4.playable import Playable
+from connect4.winstates import WinStates
 from terminalrunner.matchstats import MatchStats
 from terminalrunner.outputable import Outputable
 
@@ -25,13 +24,12 @@ class Runner:
         turn = 0
 
         while game.get_win_state() is None:
-            state = deepcopy(game.state)
             if turn % 2 == 0:
-                move = playable1.move(state, game.open_columns(), game.moves)
-                game.insert_chip(playable1.color, move)
+                move = playable1.move(game.state)
+                game.drop_chip(playable1.color, move)
             else:
-                move = playable2.move(state, game.open_columns(), game.moves)
-                game.insert_chip(playable2.color, move)
+                move = playable2.move(game.state)
+                game.drop_chip(playable2.color, move)
 
             if output_turns:
                 self.output.output_board(game.state)

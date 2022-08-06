@@ -1,9 +1,9 @@
-from os import name as system_name, system
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
-from game.game import ChipColors
-from game.playable import Playable
-from game.winstates import WinStates
+from connect4.game import ChipColors
+from connect4.gamestate import GameState
+from connect4.playable import Playable
+from connect4.winstates import WinStates
 from terminalrunner.matchstats import MatchStats
 from terminalrunner.outputable import Outputable
 
@@ -20,16 +20,16 @@ class Outputter(Outputable):
     @staticmethod
     def clear():
         return
-        if system_name == 'nt':
-            _ = system('cls')
-        else:
-            _ = system('clear')
+        # if system_name == 'nt':
+        #     _ = system('cls')
+        # else:
+        #     _ = system('clear')
 
-    def output_board(self, board: List[List[ChipColors]]) -> None:
+    def output_board(self, game_state: GameState) -> None:
         Outputter.clear()
         colored_sep_char = (Outputter.EMPTY_CODE + Outputter.SEPARATING_CHAR
                             + Outputter.END_CODE)
-        for row in board:
+        for row in game_state.state:
             print(colored_sep_char
                   + colored_sep_char.join(map(Outputter._chip_to_str, row))
                   + colored_sep_char)
@@ -40,9 +40,11 @@ class Outputter(Outputable):
         if chip == ChipColors.RED:
             return Outputter.RED_CODE + Outputter.CHIP_CHAR + Outputter.END_CODE
         elif chip == ChipColors.BLACK:
-            return Outputter.BLACK_CODE + Outputter.CHIP_CHAR + Outputter.END_CODE
+            return Outputter.BLACK_CODE + Outputter.CHIP_CHAR + \
+                   Outputter.END_CODE
         else:
-            return Outputter.EMPTY_CODE + Outputter.EMPTY_CHAR + Outputter.END_CODE
+            return Outputter.EMPTY_CODE + Outputter.EMPTY_CHAR + \
+                   Outputter.END_CODE
 
     def request_move(self, playable: Playable) -> None:
         print(f"{playable.get_name()}'s turn:")

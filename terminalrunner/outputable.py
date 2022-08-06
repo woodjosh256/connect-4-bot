@@ -1,15 +1,15 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Optional
 
-from game.game import ChipColors
-from game.playable import Playable
-from game.winstates import WinStates
+from connect4.gamestate import GameState
+from connect4.playable import Playable
+from connect4.winstates import WinStates
 
 
 class Outputable(ABC):
 
     @abstractmethod
-    def output_board(self, board: List[List[ChipColors]]) -> None:
+    def output_board(self, game_state: GameState) -> None:
         raise NotImplementedError()
 
     @abstractmethod

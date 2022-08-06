@@ -1,6 +1,6 @@
 from enum import Enum
 
-from game.winstates import WinStates
+from connect4.winstates import WinStates
 
 
 class ChipColors(Enum):

@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
-from game.chipcolors import ChipColors
+from connect4.chipcolors import ChipColors
 
 
-@dataclass
+@dataclass(frozen=True)
 class Move:
     row: int
     col: int
