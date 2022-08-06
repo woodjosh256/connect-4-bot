@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from game.game import ChipColors, WinStates
+from game.game import ChipColors
 from game.playable import Playable
+from game.winstates import WinStates
 
 
 class Outputable(ABC):
