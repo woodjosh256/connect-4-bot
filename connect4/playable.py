@@ -17,18 +17,19 @@ class Playable(ABC):
         :return an int representing the slot the chip will go in.
         Returning an invalid choice here results in a forfeit
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @classmethod
+    @abstractmethod
     def get_name(cls) -> str:
         """
         :return name of the playable
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def new_game(self) -> None:
         """
         Method called at the start of each new connect4, to alert the
-        playable a new connect4 has started.
+        playable a new connect4 game has started.
         """
         pass

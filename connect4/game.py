@@ -12,8 +12,8 @@ class Game:
     WINNING_NUMBER = 4
 
     def __init__(self):
-        self.state = GameState.new_game(self.ROWS, self.COLUMNS,
-                                        self.WINNING_NUMBER)
+        self.state: GameState = GameState.new_game(self.ROWS, self.COLUMNS,
+                                                   self.WINNING_NUMBER)
 
     def open_columns(self) -> List[int]:
         return self.state.open_columns()

@@ -4,8 +4,8 @@ from connect4.winstates import WinStates
 
 
 class ChipColors(Enum):
-    RED = 0
-    BLACK = 1
+    RED = 1
+    BLACK = 2
 
     def get_opposing_color(self):
         if self == ChipColors.RED:

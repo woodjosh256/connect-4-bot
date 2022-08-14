@@ -1,37 +1,41 @@
+from dataclasses import dataclass, field
+from itertools import chain
+from statistics import mean
+from typing import List, Optional
+
 from connect4.playable import Playable
 from connect4.winstates import WinStates
+from terminalrunner.roundstats import RoundStats
 
 
+@dataclass
 class MatchStats:
+    playable1: Playable
+    playable2: Playable
 
-    def __init__(self, playable1: Playable, playable2: Playable):
-        self.playable1_win_count: int = 0
-        self.playable2_win_count: int = 0
-        self.tie_count: int = 0
-        self.game_count: int = 0
-        self.playable1 = playable1
-        self.playable2 = playable2
+    round_stats_list: List[RoundStats] = field(default_factory=lambda: [])
 
-    def __str__(self):
-        return f"\t{self.playable1.get_name()} wins: {self.playable1_win_count}\r\n" \
-               f"\t{self.playable2.get_name()} wins: {self.playable2_win_count}\r\n" \
-               f"\tTie: {self.tie_count}"
+    def add_round(self, round_stats: RoundStats) -> None:
+        self.round_stats_list.append(round_stats)
 
-    def add_round(self, win_state: WinStates):
-        match win_state:
-            case WinStates.RED:
-                self.playable1_win_count += 1
-            case WinStates.BLACK:
-                self.playable2_win_count += 1
-            case WinStates.TIE:
-                self.tie_count += 1
-        self.game_count += 1
+    def get_win_state_percentage(self, win_state: WinStates) -> Optional[float]:
+        rounds = len(self.round_stats_list)
+        if rounds == 0:
+            return None
 
-    def get_win_state_percentage(self, win_state: WinStates):
-        match win_state:
-            case WinStates.RED:
-                return self.playable1_win_count / self.game_count
-            case WinStates.BLACK:
-                return self.playable2_win_count / self.game_count
-            case WinStates.TIE:
-                return self.tie_count / self.game_count
+        wins = sum(r.win_state == win_state for r in self.round_stats_list)
+        return wins / rounds
+
+    def get_p1_avg_move_time(self) -> Optional[float]:
+        rounds = len(self.round_stats_list)
+        if rounds == 0:
+            return None
+
+        return mean(chain(*[r.p1_move_times for r in self.round_stats_list]))
+
+    def get_p2_avg_move_time(self) -> Optional[float]:
+        rounds = len(self.round_stats_list)
+        if rounds == 0:
+            return None
+
+        return mean(chain(*[r.p2_move_times for r in self.round_stats_list]))

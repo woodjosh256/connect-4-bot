@@ -1,14 +1,17 @@
 import importlib
 import pkgutil
 from itertools import combinations
+from timeit import default_timer as timer
 from typing import List, Type
 
 import playables as playables
 from connect4.game import Game, ChipColors
 from connect4.playable import Playable
 from connect4.winstates import WinStates
+from playables.joshw.logger import Logger
 from terminalrunner.matchstats import MatchStats
 from terminalrunner.outputable import Outputable
+from terminalrunner.roundstats import RoundStats
 
 
 class Runner:
@@ -18,17 +21,23 @@ class Runner:
 
     # todo - add turn time limit
     def run_round(self, playable1: Playable, playable2: Playable,
-                  output_turns: bool = True,
-                  output_wins: bool = True) -> WinStates:
+                  p1starts: bool, output_turns: bool = True,
+                  output_wins: bool = True) -> RoundStats:
         game = Game()
+        stats = RoundStats(
+            playable1=playable1,
+            playable2=playable2
+        )
         turn = 0
-
         while game.get_win_state() is None:
-            if turn % 2 == 0:
+            start_time = timer()
+            if (turn % 2 == 0 and p1starts) or (turn % 2 != 0 and not p1starts):
                 move = playable1.move(game.state)
+                stats.p1_move_times.append(timer() - start_time)
                 game.drop_chip(playable1.color, move)
             else:
                 move = playable2.move(game.state)
+                stats.p2_move_times.append(timer() - start_time)
                 game.drop_chip(playable2.color, move)
 
             if output_turns:
@@ -36,24 +45,29 @@ class Runner:
 
             turn += 1
 
-        win_state = game.get_win_state()
+        stats.win_state = game.get_win_state()
 
         if output_wins:
-            self.output.output_board(game.state)
-            self.output.output_results(win_state)
+            self.output.output_round_end(stats, game.state)
 
-        return win_state
+        # if game.get_win_state() == WinStates.BLACK:
+        #     print("printing buffer")
+        #     print(Logger().buffer)
+        # Logger().buffer = ""
+
+        return stats
 
     def run_match(self, playable1: Playable, playable2: Playable,
                   rounds: int = 100, output_turns: bool = True,
                   output_wins: bool = True) -> MatchStats:
         match_stats = MatchStats(playable1, playable2)
 
+        playable1_starts = True
         for i in range(rounds):
-            win_state = self.run_round(playable1, playable2, output_turns,
-                                       output_wins)
+            win_state = self.run_round(playable1, playable2, playable1_starts,
+                                       output_turns, output_wins)
             match_stats.add_round(win_state)
-            playable1, playable2 = playable2, playable1  # swap who starts first
+            playable1_starts = not playable1_starts
 
         return match_stats
 
@@ -87,7 +101,7 @@ class Runner:
     def run_tournament(self, playable_classes: List[Type[Playable]],
                        rounds_per_match: int = 100, output_turns: bool = True,
                        output_wins: bool = True):
-        tournament_stats = []
+        match_stats_list = []
 
         playable_matchups = combinations(playable_classes, 2)
 
@@ -98,7 +112,6 @@ class Runner:
             match_stats = self.run_match(red_player, black_player,
                                          rounds_per_match, output_turns,
                                          output_wins)
-            tournament_stats.append((playable_matchup[0], playable_matchup[1],
-                                     match_stats))
+            match_stats_list.append(match_stats)
     
-        return tournament_stats
+

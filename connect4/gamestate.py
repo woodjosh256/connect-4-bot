@@ -96,10 +96,10 @@ class GameState:
             return 0
 
         max_dist = 0
-        for win_condition in [self.horiz_dist,
+        for win_condition in (self.horiz_dist,
                               self.vert_dist,
                               self.incline_diagonal_dist,
-                              self.decline_diagonal_dist]:
+                              self.decline_diagonal_dist):
             distance = win_condition()
             max_dist = max(max_dist, distance)
             if max_dist >= self.winning_number:
@@ -166,7 +166,3 @@ class GameState:
             max_col += 1
 
         return max_row - min_row + 1
-
-
-state1 = GameState.new_game(6, 7, 4)
-state2 = state1.copy(rows=5)
