@@ -4,7 +4,7 @@ from connect4.gamestate import GameState
 from connect4.playable import Playable
 import tensorflow as tf
 
-class Neural_Player(Playable):
+class NeuralPlayer(Playable):
 
     def __init__(self, color: ChipColors):
         super().__init__(color)
