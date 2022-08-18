@@ -1,25 +1,13 @@
-import builtins
 from os import name as system_name, system
 from statistics import mean
-from typing import Tuple
 
 from connect4.game import ChipColors
 from connect4.gamestate import GameState
 from connect4.playable import Playable
 from connect4.winstates import WinStates
-from playables.joshw.logger import Logger
 from terminalrunner.matchstats import MatchStats
 from terminalrunner.outputable import Outputable
 from terminalrunner.roundstats import RoundStats
-
-# buffer_mode = False
-#
-#
-# def print(msg: object = ""):
-#     if buffer_mode:
-#         Logger().log_buffer(str(msg))
-#     else:
-#         builtins.print(msg)
 
 
 class Outputter(Outputable):
@@ -33,6 +21,7 @@ class Outputter(Outputable):
 
     @staticmethod
     def clear():
+        return
         if system_name == 'nt':
             _ = system('cls')
         else:
