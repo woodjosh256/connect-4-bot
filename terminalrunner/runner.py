@@ -7,6 +7,7 @@ from typing import List, Type
 import playables as playables
 from connect4.game import Game, ChipColors
 from connect4.playable import Playable
+from connect4.winstates import WinStates
 from terminalrunner.matchstats import MatchStats
 from terminalrunner.outputable import Outputable
 from terminalrunner.roundstats import RoundStats
@@ -16,6 +17,7 @@ class Runner:
 
     def __init__(self, output: Outputable):
         self.output = output
+        self.scores = {}
 
     # todo - add turn time limit
     def run_round(self, playable1: Playable, playable2: Playable,
@@ -47,11 +49,6 @@ class Runner:
 
         if output_wins:
             self.output.output_round_end(stats, game.state)
-
-        # if game.get_win_state() == WinStates.BLACK:
-        #     print("printing buffer")
-        #     print(Logger().buffer)
-        # Logger().buffer = ""
 
         return stats
 
@@ -97,9 +94,11 @@ class Runner:
         return Playable.__subclasses__()
 
     def run_tournament(self, playable_classes: List[Type[Playable]],
-                       rounds_per_match: int = 100, output_turns: bool = True,
+                       rounds_per_match: int = 10, output_turns: bool = True,
                        output_wins: bool = True):
         match_stats_list = []
+
+        scores = {playable.get_name(): 0 for playable in playable_classes}
 
         playable_matchups = combinations(playable_classes, 2)
 
@@ -110,6 +109,21 @@ class Runner:
             match_stats = self.run_match(red_player, black_player,
                                          rounds_per_match, output_turns,
                                          output_wins)
+            self.output.output_match_stats(match_stats)
+
+            # todo - fix this to not be gross
+            red_wins = match_stats.get_win_state_percentage(WinStates.RED) * rounds_per_match
+            black_wins = match_stats.get_win_state_percentage(WinStates.BLACK) * rounds_per_match
+            ties = match_stats.get_win_state_percentage(WinStates.TIE) * rounds_per_match
+
+            scores[red_player.get_name()] += red_wins * 3 + ties
+            scores[black_player.get_name()] += black_wins * 3 + ties
+
+            input("Enter to continue...")
             match_stats_list.append(match_stats)
+
+        input("And the scores are.......")
+        print(dict(sorted(scores.items(), reverse=True))
+)
     
 

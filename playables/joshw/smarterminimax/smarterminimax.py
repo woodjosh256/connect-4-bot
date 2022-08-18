@@ -6,7 +6,7 @@ from playables.joshw.minimaxwithcaching import MinimaxWithCaching
 class SmarterMinimax(MinimaxWithCaching):
     WINNING_NUMBER = 4
     COLUMNS = 7
-    DEPTH = 7
+    DEPTH = 3
 
     def __init__(self, color: ChipColors):
         super().__init__(color)
@@ -15,8 +15,7 @@ class SmarterMinimax(MinimaxWithCaching):
 
     @classmethod
     def get_name(cls) -> str:
-        return "Smarter Minimax"
-
+        return "Shallow Blue"
 
     def get_threat_pts(self, game_state: MutableGameState,
                        maximising_next: bool) -> float:

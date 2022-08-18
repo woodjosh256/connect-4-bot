@@ -3,7 +3,7 @@ from playables.joshw.minimaxwithcaching import MinimaxWithCaching
 
 
 class SmartMinimax(MinimaxWithCaching):
-    DEPTH = 8
+    DEPTH = 4
 
     @classmethod
     def get_name(cls) -> str:

@@ -7,7 +7,7 @@ from connect4.chipcolors import ChipColors
 from connect4.gamestate import GameState
 from connect4.playable import Playable
 from playables.joshw.MutableGameState import MutableGameState, FastMove
-from playables.transpositiontable import TranspositionTable
+from playables.joshw.transpositiontable import TranspositionTable
 
 
 class MinimaxWithCaching(Playable):

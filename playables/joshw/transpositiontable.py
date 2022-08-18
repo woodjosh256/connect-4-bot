@@ -10,7 +10,7 @@ class StateEval:
 
 class TranspositionTable:
 
-    MAX_CACHED_ENTRIES: int = 40000000
+    MAX_CACHED_ENTRIES: int = 20000000
     PERCENT_TO_DROP = .2
 
     def __init__(self):
