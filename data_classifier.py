@@ -1,10 +1,12 @@
 import csv 
 import os
 from typing import List, AnyStr
+from multiprocessing import Pool
 
 from connect4.chipcolors import ChipColors
 from connect4.gamestate import GameState
 from playables.bennettw.improvedrandom import ImprovedRandom
+from playables.joshw.basicminimax.basicminimax import BasicMinimax
 
 class BoardData():
     def __init__(self, board, win):
@@ -77,6 +79,12 @@ def write_to_csv(data: List[BoardData], file_name: str):
         for row in data:
             writer.writerow(row.get_output_line())
 
+def classify_board(data: BoardData):
+    game_state = build_game_state(data)
+    player = BasicMinimax(ChipColors.RED)
+    data.optimal_move = player.move(game_state)
+    return data
+
 board_list = []
 
 color = ChipColors.RED
@@ -85,12 +93,8 @@ with open(f'{os.getcwd()}/playables/bennettw/neural_net/data/connect-4.data', 'r
     reader = csv.reader(f)
     for row in reader:
         board_list.append(get_data(row, color))
+22
+with Pool(processes=6) as pool:
+    board_list = pool.map(classify_board, board_list)
 
-bot = ImprovedRandom(ChipColors.RED)
-
-for i, board in enumerate(board_list):
-    if(i % 100 == 0):
-        print(i)
-    board.optimal_move = bot.move(build_game_state(board))
-
-write_to_csv(board_list, f'{os.getcwd()}/playables/bennettw/neural_net/data/connect-4_improved_random.data')
+write_to_csv(board_list, f'{os.getcwd()}/playables/bennettw/neural_net/data/connect-4_joshw_minimax.data')
