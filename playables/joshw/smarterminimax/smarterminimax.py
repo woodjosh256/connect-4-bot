@@ -15,7 +15,7 @@ class SmarterMinimax(MinimaxWithCaching):
 
     @classmethod
     def get_name(cls) -> str:
-        return "Shallow Blue"
+        return "Very Shallow Blue"
 
     def get_threat_pts(self, game_state: MutableGameState,
                        maximising_next: bool) -> float:
