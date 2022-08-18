@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from connect4.gamestate import GameState
 from connect4.playable import Playable
-from connect4.winstates import WinStates
 from terminalrunner.matchstats import MatchStats
 from terminalrunner.roundstats import RoundStats
 

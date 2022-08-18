@@ -7,8 +7,6 @@ from typing import List, Type
 import playables as playables
 from connect4.game import Game, ChipColors
 from connect4.playable import Playable
-from connect4.winstates import WinStates
-from playables.joshw.logger import Logger
 from terminalrunner.matchstats import MatchStats
 from terminalrunner.outputable import Outputable
 from terminalrunner.roundstats import RoundStats
