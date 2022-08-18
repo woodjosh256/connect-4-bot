@@ -31,11 +31,11 @@ class Amoeba(Playable):
         return "Erik Carlson's Amoeba Bot"
 
     def get_move_row(self, column, game_state: GameState) -> int:
-        counter = 0
-        for row in range(game_state.rows):
+        counter = 5
+        for row in range(game_state.rows - 1, 0, -1):
             if game_state.state[row][column] == None:
                 break
-            counter += 1
+            counter -= 1
         return counter
     
     
