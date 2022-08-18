@@ -1,4 +1,5 @@
 from math import inf
+import random
 from typing import Dict, List
 from connect4.chipcolors import ChipColors
 from connect4.gamestate import GameState
@@ -6,14 +7,22 @@ from connect4.game import Game
 import numpy as np
 from playables.joshw.minimaxwithcaching import MinimaxWithCaching
 from playables.joshw.MutableGameState import FastMove
+from playables.transpositiontable import TranspositionTable
 
 
 class BenMBot(MinimaxWithCaching):
     INFINITY = float(inf)
-    DEPTH = 6
+    DEPTH = 5
     MAX_SORT_DEPTH = 3
     EMPTY = 0
     WINDOW_LENGTH = 4
+
+    def __init__(self, color: ChipColors):
+        super().__init__(color)
+        self.random = random.Random(42069)
+        self.maximising = self.COLOR_MAP[self.color]
+        self.transposition_table = TranspositionTable()
+        self.starting = None
 
     @classmethod
     def get_name(cls) -> str:
